@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/moon.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Evaluation Module</h1>
+					<h3>Módulo evaluación para la aplicación <a href="https://github.com/acacha/ebre-escool">Ebre-escool</a> </h3>
+					<p>
+						<small>Created by <a href="https://github.com/kriminal666/Evaluation">Iván Roldán/Kriminal</a></small>
+					</p>
+				</section>
+
+				<section data-background-transition="zoom">
+					<h2>Presentación</h2>
+					<p class="fragment">
+						Añadir un nuevo módulo que permita evaluar a los alumnos de cada uno de los módulos de el grado formativo.
+					</p>
+					<p class="fragment"> 
+						Se tendrán que poder evaluar cada una de las diferentes unidades formativas(UF) en las que el alumno se haya matriculado.
+					</p>
+					<p class="fragment">
+						La evaluación se debe poder hacer de la siguiente manera: 
+						
+					</p>
+				</section>
+				<section data-background-transition="zoom">
+					<small><ul>
+						<li><b>Profesores de grupo:</b> A cada profesor se le muestra la lista de módulos profesionales que imparte y una vez se escoja un módulo, le aparecerá un listado de los alumnos y las unidades formativas en las que esté matriculado cada uno.</li>
+						<li><b>Tutores de grupo:</b> Además de poder hacer lo mismo que los anteriores pueden evaluar por grupo, es decir, una vez han escogido un grupo aparecen todos los módulos profesionales del grupo y pueden poner nota en cualquier unidad formativa de cualquier módulo, tanto si lo imparten como si no.</li>
+						<li><b>Jefes de departamento:</b> Además de poder hacer lo que hacen los profesores normales, podrán evaluar cualquier unidad formativa de cualquier módulo que pertenezca al departamento.</li>
+						<li><b>Administrador:</b> Pueden escoger cualquier grupo y evaluar cualquier unidad formativa de cualquier módulo que se imparta en el centro.</li>
+					</ul></small>
+
+				</section>
+				<section>
+					<h3>Implementación</h3>
+					<section>
+						<ul class="fragment highlight-blue">
+							<li class="fragment">
+								Diseño de la estructura de la base de datos
+							</li>
+								<ul>
+									<li class="fragment">Selección de los campos de cada tabla</li>
+									<li class="fragment">Creación del diagrama ER</li>
+						      	</ul>
+						
+						<li class="fragment">Instalación de composer</li>
+						<li class="fragment">Creación de un proyecto vacío de Laravel 5</li>
+						<ul>
+							<li class="fragment">Migraciones</li>
+							<li class="fragment">Seeders</li>
+							<li class="fragment">Modelos</li>
+							<li class="fragment">Relaciones</li>
+							<li class="fragment">Controladores</li>
+							<li class="fragment">Rutas</li>
+						</ul>
+						<li class="fragment"> Entorno de trabajo Homestead</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Base de datos</h2>
+						<p class="fragment">Utilizamos como base la base de datos de ebre-escool<p>
+					</section>
+					<section data-background="img/evaluation.png" data-background-size="750px">
+						<h3>Diseño ER</h3>
+						<section ></section>
+						
+					</section>
+					<section>
+						<h3>Migraciones</h3>
+						
+						<pre><code data-trim>
+							$ php artisan make:migration create_evaluation_table
+					</code></pre>
+					<p><b>database/migrations</b></p>
+					
+						<pre><code data-trim>
+							class CreateEvaluationTable extends Migration
+{
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('evaluation', function (Blueprint $table) {
+            $table->increments('evaluation_id');
+            $table->integer('evaluation_academic_period_id');
+            $table->integer('evaluation_student_id');
+            $table->integer('evaluation_study_subModule_id');
+            $table->integer('evaluation_mark_id');
+            $table->timestamp('evaluation_created_at');
+            $table->integer('evaluation_creationUserId')->unsigned()->nullable();
+            $table->timestamp('evaluation_updated_at');
+            $table->integer('evaluation_lastUpdateUserId')->unsigned()->nullable();
+            $table->softDeletes();
+
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('evaluation');
+    }
+
+}
+	
+						</code></pre>
+						<pre><code data-trim>
+							$ php artisan [migrate|migrate:refresh|migrate:reset|migrate:rollback] [--seed]
+	
+						</code></pre>
+
+
+					</section>
+					<section>
+						<h3>Seeders</h3>
+						<p><b>database/seeds</b></p>
+							<ul>
+								<li>
+									<a href="https://github.com/laracasts/Laravel-5-Generators-Extended">Laravel-5-Generators-Extended</a>
+									<pre><code data-trim>
+										$ composer require laracasts/generators --dev
+									</code></pre>
+									<pre><code data-trim>
+										$ php artisan make:seed EvaluationTableSeeder
+									</code></pre>
+								</li>
+								<li>
+									<a href="https://github.com/fzaninotto/Faker">Faker</a>
+									<pre><code data-trim>
+										$ composer require fzaninotto/faker
+									</code></pre>
+								</li>
+							</ul>
+					</section>
+					<section>
+						<h3>Seeders</h3>
+						
+						<p><b>database/seeds</b></p>
+						<pre><code data-trim>
+							class EvaluationTableSeeder extends DatabaseSeeder
+{
+
+    /**
+     * Table evaluation seeder
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Model::unguard();
+        //First delete all table
+        DB::table('evaluation')->truncate();
+
+        //use docs_seeder/evaluation.csv to seed
+        $csv = dirname(__FILE__) . '/docs_seeder/evaluation.csv';
+        $file_handle = fopen($csv, "r");
+
+        while (!feof($file_handle)) {
+            $line = fgetcsv($file_handle);
+            if (empty($line)) {
+                continue; // skip blank lines
+            }
+            //create records
+            Evaluation::Create(array(
+                'evaluation_academic_period_id' => $line[0],
+                'evaluation_student_id' => $line[1],
+                'evaluation_study_subModule_id' => $line[2],
+                'evaluation_mark_id' => $line[3]
+            ));
+
+        }
+        fclose($file_handle);
+
+        //message
+        $this->command->info('Table evaluation seeded!');
+
+    }
+						</code></pre>
+						<pre><code data-trim>
+//database/seeds/DataBaseSeeder.php
+Model::unguard();
+//call grade_scale_mark table seeder
+ $this->call('GradeScaleMarkTableSeeder');
+
+						 </code></pre>
+						</section>
+						 <section>
+						 	<h3>Seeders</h3>
+						 <pre><code data-trim>
+						 	$ php artisan db:seed [--class=EvaluationTableSeeder]
+						 </code></pre>
+						</section>
+						<section>
+							<h3>Models</h3>
+							<p><b>app/</b></p>
+							<pre><code data-trim>
+								$ php artisan make:model Evaluation [--no-migration]
+							</code></pre>
+							<pre><code data-trim>
+								class Evaluation extends Model
+{
+    use SoftDeletes;
+    /**
+     * Soft delete field
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'evaluation';
+
+    /**
+     * Override primary key name
+     *
+     * @var string
+     */
+    protected $primaryKey = 'evaluation_id';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['evaluation_academic_period_id', 'evaluation_mark_id',
+        'evaluation_student_id', 'evaluation_study_subModule_id', 'evaluation_lastUpdateUserId'];
+
+    /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'evaluation_created_at';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'evaluation_updated_at';
+							</code></pre>
+
+							
+						</section>
+	<section>
+		<h3>Relations</h3>
+		<p><b><a href="http://laravel.com/docs/5.0/eloquent#relationships">ORM Eloquent</a></b><p>
+
+
+	</section>
+	<section>
+		<h3>Relations</h3>
+		<pre><code data-trim>
+			/**
+     * This belong to one user
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+
+        return $this->belongsTo('Evaluation\User', 'evaluation_student_id');
+    }
+
+    /**
+     * This belongs to one mark
+     *
+     * @return mixed
+     */
+    public function mark()
+    {
+
+        return $this->belongsTo('Evaluation\Mark', 'evaluation_mark_id')->select(array('mark_id', 'mark_value'));
+
+    }
+
+    /**
+     * This belongs to one study_submodules
+     *
+     * @return mixed
+     */
+    public function studySubModules()
+    {
+
+        return $this->belongsto('Evaluation\StudySubmodules', 'evaluation_study_subModule_id')
+            ->select(array('study_submodules_id', 'study_submodules_shortname', 'study_submodules_name', 'study_submodules_study_module_id'));
+    }
+
+    /**
+     * this belongs to one academic period
+     *
+     * @return mixed
+     */
+    public function academicPeriods()
+    {
+
+        return $this->belongsTo('Evaluation\AcademicPeriods', 'evaluation_academic_period_id')
+            ->select(array('academic_periods_id', 'academic_periods_name'));
+    }
+		</code></pre>
+	</section>
+					
+
+					</section>
+				</section>
+		<section>
+			<h3>Controllers</h3>
+			<p><b>app/Http/Controllers/ModelControllers</b><p>
+			<pre><code data-trim>
+			$ php artisan make:controller ModelControllers/EvaluationController
+			</code></pre>
+			<pre><code data-trim>
+				class EvaluationController extends ApiController
+{
+
+    /**
+     * @var EvaluationTransformer
+     */
+    protected $evaluationTransformer;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param EvaluationTransformer $evaluationTransformer
+     */
+    function __construct(EvaluationTransformer $evaluationTransformer)
+    {
+        $this->middleware('auth');
+
+        $this->evaluationTransformer = $evaluationTransformer;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $evaluations = Evaluation::all();
+
+        return $this->respond([
+
+            'data' => $this->evaluationTransformer->transformCollection($evaluations->toArray())
+
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function indexWithTrashed()
+    {
+        //return Evaluation::withTrashed()->get();
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
+        Evaluation::create(Request::all());
+
+        return $this->respondCreated('Evaluation created');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $evaluation = Evaluation::find($id);
+
+        if (!$evaluation) {
+
+            return $this->respondNotFound('Evaluation does not exists.');
+        }
+
+        return $this->respond([
+
+            'data' => $this->evaluationTransformer->transform($evaluation->toArray())
+
+        ]);
+
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function update($id)
+    {
+
+        $evaluation = Evaluation::findOrFail($id);
+
+        $evaluation->evaluation_academic_period_id = Request::input('academicPeriodId');
+        $evaluation->evaluation_study_subModule_id = Request::input('subModuleId');
+        $evaluation->evaluation_student_id = Request::input('studentId');
+        $evaluation->evaluation_mark_id = Request::input('markId');
+        $evaluation->evaluation_lastUpdateUserId = Request::input('lastUpdateUserId');
+        $evaluation->save();
+
+        return $evaluation;
+
+    }
+
+    /**
+     * Remove evaluation resource from storage.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        $evaluation = Evaluation::findorfail($id);
+        $evaluation->forceDelete($id);
+    }
+
+    /**
+     * Mark for deletion the evaluation
+     *
+     * @param $id
+     */
+    public function delete($id)
+    {
+        $evaluation = Evaluation::findOrFail($id);
+
+        $evaluation->delete();
+    }
+
+
+}
+
+			</code></pre>
+
+			</section>
+			<section>
+				<h3>controllers</h3>
+			<p>Ejecución de querys con relaciones(eager-load, lazy-load, nested)<p>
+			<pre><code data-trim>
+				 public function getGroupEvaluations()
+    {
+        $users = User::with(['evaluations'
+        => function ($query) {
+                $query->whereHas('studysubmodules', function ($q) {
+                    $q->where('study_submodules_study_module_id', Request::input('module'));
+                })->orderby('evaluation_study_subModule_id', 'ASC')->with('studysubmodules')->with('mark');
+            }])->find(Request::input('id'));
+
+        return $users;
+			</code></pre>
+			</section>
+
+			<section>
+				<h3>Routes</h3>
+				<p><b>app/Http/Routes.php</b></p>
+				<pre><code data-trim>
+					Route::group(['prefix' => 'api'], function () {
+
+    Route::resource('evaluations', 'ModelControllers\EvaluationController');
+
+    Route::resource('users', 'ModelControllers\UsersController');
+
+    Route::resource('gradescales', 'ModelControllers\GradeScaleController');
+
+    Route::resource('marks', 'ModelControllers\MarkController');
+
+    Route::resource('studysubmodules', 'ModelControllers\StudySubmodulesController');
+
+    Route::resource('studymodules', 'ModelControllers\StudyModuleController');
+
+});
+				</code></pre>
+				<pre><code data-trim>
+Route::get('evaluationswithTrashed', 'ModelControllers\EvaluationController@indexWithTrashed');                                   
+                                                                                                                                 
+Route::match(array('GET', 'POST'), 'usersgroupevaluations', 'ModelControllers\UsersController@getGroupEvaluations');             
+                                                                                                                                 
+Route::get('studymodule/{id}/submodules', 'ModelControllers\StudyModuleController@getSubModules');                               
+                                                                                                                                 
+ 
+				</code></pre>
+			</section>
+			<section>
+				<h3><a href="https://laracasts.com/tags/principles">SOLID</a></h3>
+				<table>
+						<thead>
+							<tr>
+								<th>Inicial</th>
+								<th>Acrónimo</th>
+								<th>Concepto</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>S</td>
+								<td>SRP</td>
+								<td>
+								Single responsibility principle
+    							</td>
+								
+							</tr>
+							<tr>
+								<td>O</td>
+								<td>OCP</td>
+								<td>Open/Closed principle</td>
+							</tr>
+							<tr>
+								<td>L</td>
+								<td>LSP</td>
+								<td> Liskov substitution principle</td>
+							</tr>
+								<tr>
+									<td>I</td>
+									<td>ISP</td>
+									<td> Interface segregation principle</td>
+								</tr>
+								<tr>
+									<td>D</td>
+									<td>DIP</td>
+									<td>Dependency inversion principle</td>
+								</tr>
+						</tbody>
+					</table>
+			</section>
+			<section>
+				<h3>Transformaciones y Refactoring</h3>
+				<section>
+				<ul class="fragment highlight-red">
+					<li class="fragment">
+						Transformación
+					</li>
+					<ul>
+						<li class="fragment">Evitar utilizar el método all()</li>
+						<li class="fragment">No enviar a la vista la estructura de la base de datos</li>
+						<li class="fragment">Poder enviar Headers(meta-data) y Status Code</li>
+					</ul>
+					<li class="fragment">
+						Refactoring
+					</li>
+					<ul>
+						<li class="fragment">Limpiar el código</li>
+					</ul>
+				</ul>
+			</section>
+			</section>
+			<section>
+				<h3>Transformations</h3>
+				<p><b>app/Transformers/Transformer.php</b></p>
+				<pre><code data-trim>
+					abstract class Transformer
+{
+
+    /**
+     * Transform collection
+     *
+     * @param $items
+     * @return array
+     */
+    public function transformCollection(array $items)
+    {
+        return array_map([$this, 'transform'], $items);
+    }
+
+    /**
+     * @param $item
+     * @return mixed
+     */
+    public abstract function transform($item);
+
+}
+				</code></pre>
+
+			</section>
+			<section>
+				<h3> Evaluation Transformer</h3>
+				<p><b>/app/Transfromers/EvaluationTransformer</b><p>
+					<pre><code data-trim>
+						class EvaluationTransformer extends Transformer
+{
+
+    /**
+     * Transform evaluation
+     *
+     * @param $evaluation
+     * @return array
+     */
+    public function transform($evaluation)
+    {
+
+        return [
+
+            'evaluationId' => $evaluation['evaluation_id'],
+
+            'markId' => $evaluation['evaluation_mark_id'],
+
+            'academicPeriodId' => $evaluation['evaluation_academic_period_id'],
+
+            'subModuleId' => $evaluation['evaluation_study_subModule_id'],
+
+            'studentId' => $evaluation['evaluation_student_id'],
+
+            'creationDate' => $evaluation['evaluation_created_at'],
+
+            'creationUserId' => $evaluation['evaluation_creationUserId'],
+
+            'updateDate' => $evaluation['evaluation_updated_at'],
+
+            'lastUpdateUserId' => $evaluation['evaluation_lastUpdateUserId'],
+
+            'softDelete' => $evaluation['deleted_at']
+
+        ];
+    }
+
+}
+					</code></pre>
+			</section>
+			<section>
+				<h3>Transforming</h3>
+				<p><b>app/Http/Controllers/ModelControllers/EvaluationController.php</b></p>
+				<pre><code data-trim>
+					class EvaluationController extends ApiController
+{
+
+    /**
+     * @var EvaluationTransformer
+     */
+    protected $evaluationTransformer;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param EvaluationTransformer $evaluationTransformer
+     */
+    function __construct(EvaluationTransformer $evaluationTransformer)
+    {
+        $this->middleware('auth');
+
+        $this->evaluationTransformer = $evaluationTransformer;
+    }
+				</code></pre>
+				<pre><code data-trim>
+				'data' => $this->evaluationTransformer->transformCollection($evaluations->toArray());
+				</code></pre>
+			</section>
+			<section>
+				<h3>Refactoring</h3>
+				<p><b>app/Http/Controllers/Api/ApiController.php</b></p>
+				<pre><code data-trim>
+				class ApiController extends Controller
+{
+
+
+    /**
+     * @var int
+     */
+    protected $statusCode = 200;
+
+    /**
+     * @return mixed
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     *
+     * @param mixed $statusCode
+     * @return $this
+     */
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $message
+     *
+     * @return mixed
+     */
+    public function respondNotFound($message = 'Not Found')
+    {
+
+        return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError($message);
+
+    }
+
+    /**
+     * @param string $message
+     *
+     * @return mixed
+     */
+    public function respondInternalError($message = 'Internal error')
+    {
+
+        return $this->setStatusCode(IlluminateResponse::HTTP_INTERNAL_SERVER_ERROR)->respondWithError($message);
+
+    }
+
+    /**
+     * @param $message
+     * @return mixed
+     */
+    protected function respondCreated($message)
+    {
+        return $this->setStatusCode(IlluminateResponse::HTTP_CREATED)->respond([
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @param $data
+     * @param array $headers
+     * @return mixed
+     */
+    public function respond($data, $headers = [])
+    {
+
+        return Response::json($data, $this->getStatusCode(), $headers);
+    }
+
+    /**
+     * @param $message
+     * @return mixed
+     */
+    public function respondWithError($message)
+    {
+
+        return $this->respond([
+
+            'error' => [
+
+                'message' => $message,
+
+                'status_code' => $this->getStatusCode()
+            ]]);
+    }
+}
+				</code></pre>
+			</section>
+			<section>
+				<h3>Utilizando Refactoring</h3>
+				<p<<b>app/Http/Controllers/ModelControllers/EvaluationController.php</b></p>
+				<pre><code data-trim>
+					class EvaluationController extends ApiController
+{
+
+				</code></pre>
+				<pre><code data-trim>
+				public function show($id)
+    {
+        $evaluation = Evaluation::find($id);
+
+        if (!$evaluation) {
+
+            return $this->respondNotFound('Evaluation does not exists.');
+        }
+
+        return $this->respond([
+
+            'data' => $this->evaluationTransformer->transform($evaluation->toArray())
+
+        ]);
+
+    }
+				</code></pre>
+			</section>
+
+			<section>
+				<h2>Agradecimientos</h2>
+				<p>TODO</p>
+			</section>
+				
+		</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
