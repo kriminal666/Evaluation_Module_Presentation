@@ -2,7 +2,7 @@
 
 Done with:
 
-reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.svg?branch=master)](https://travis-ci.org/hakimel/reveal.js)
+[reveal.js](https://github.com/hakimel/reveal.js)
 
 MIT licensed
 
