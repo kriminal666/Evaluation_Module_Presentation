@@ -70,13 +70,53 @@
 					</ul></small>
 
 				</section>
-                <section data-background ="img/arquitect.png" data-background-size ="600px">
-                    <h3>Arquitectura<h3>
-                        <section>
-                            <p>Se realiza una API aprovechando el soporte de Laravel 5</p>
-                        </section>
+                <section   data-background-size ="600px">
+                   
+                    <h3>Arquitectura</h3>
+                    <p>Se realiza una API aprovechando el soporte de Laravel 5</p>
+                    <img data-src ="img/arquitect.png" data-size="600px"/>
+                
+                   
+               </section>
+                   
+                    <section>
+                        <h3>Paradigma MVC</h3>
+                        <p>La implementación se desarrolla empleando el paradigma:</p>
+                        <p><ul>
+                            <li>Modelo</li>
+                            <li>Vista</li>
+                            <li>Controlador</li>
+                        </ul></p>
+                        
+                        <img data-src = "img/mvc.png" data-size = "400px"/>
+                    </section>
 
-                </section>
+                    <section>
+                        <h3>Herramientas utilizadas</h3>
+                        <small><ul>
+                            <li><a href="https://getcomposer.org/">Composer</a></li>
+                            <li><a href="http://laravel.com/">Laravel 5</a></li>
+                            <li><a href="https://www.github.com">GitHub</a></li>
+                            <ul>
+                                <li><a href="https://gist.github.com/">Gists</a></li>
+                                <li><a href="https://pages.github.com/">GitHub Pages</a></li>
+                            </ul>
+                            <li><a href="https://scrutinizer-ci.com/">Scrutinizer</a></li>
+                            <li><a href="https://packagist.org/">Packagist</a></li>
+                            <li>Vistas</li>
+                            <ul>
+                                <li><a href="https://angularjs.org/">Angular.js</a></li>
+                                <li><a href="https://www.datatables.net/">DataTables</a></li>
+                                <li><a href="http://bs-table.com">BS-table</a></li>
+                                <li><a href="https://nodejs.org/">Node.js</a></li>
+                            </ul>
+                            <li><a href="https://github.com/hakimel/reveal.js/">Reveal.js</a></li>
+                            <li><a href="http://www.phpdoc.org/">PHPDocumentor</a></li>
+                            <li><a href="http://dia-installer.de/">Dia</a></li>
+                        </ul></small>
+                    </section>
+
+               
                 <section>
                     <h3>Repositorios</h3>
                     <ul>
@@ -88,6 +128,15 @@
                         </li>
                         <li>
                             <a href="https://github.com/kriminal666/evaluation-ng-admin">Cliente ng-admin</a>
+                        </li>
+
+                        <li>
+                            PHPDoc
+                            <ul>
+                                <li><a href="https://github.com/kriminal666/Evaluation_API_PHPDoc">Repositorio PHPDoc</a></li>
+                                <li><a href="http://kriminal666.github.io/Evaluation_API_PHPDoc/">Documentación PHP(Web)</a></li>
+                            </ul>
+
                         </li>
                         <li>
                             <a href="https://github.com/kriminal666/Evaluation_Module_Presentation">Presentación del proyecto</a>
@@ -116,7 +165,7 @@
                             </li>
                         </ul>
                         <li class="fragment">
-                            <a href="https://github.com">GitHub</a>
+                            <a href="https://github.com/kriminal666/Evaluation">GitHub</a>
                             <ul>
                                 <li class="fragment">
                                     <pre><code data-trim>
@@ -162,61 +211,32 @@ $ composer install
 				<section>
 					<section>
 						<h2>Base de datos</h2>
+                        <p><b>app/config/database.php</b></p>
 						<p class="fragment">Utilizamos como base la base de datos de ebre-escool<p>
 					</section>
-					<section data-background="img/evaluation.png" data-background-size="750px">
+					<section>
 						<h3>Diseño ER</h3>
-						<section ></section>
+                        <p>Los campos básicos de las tablas</p>
+						<img class="stretch" data-src="img/evaluation.png" data-size="600px"/>
 						
 					</section>
 					<section>
 						<h3>Migraciones</h3>
-						
+                        <p><b>database/migrations</b></p>
+                        <p>Las utilizamos como generadores de las tablas nuevas en la base de datos.</p>
+						<p>Para crear una migración:</p>
 						<pre><code data-trim>
 							$ php artisan make:migration create_evaluation_table
-					</code></pre>
-					<p><b>database/migrations</b></p>
+					    </code></pre>
+                        <ul>
+                            <li>Métodos:</li>
+                            <ul>
+                                <li>function up()</li>
+                                <li>function down()</li>
+                            </ul>
+                        </ul>
+
 					
-						<pre><code data-trim>
-							class CreateEvaluationTable extends Migration
-{
-
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('evaluation', function (Blueprint $table) {
-            $table->increments('evaluation_id');
-            $table->integer('evaluation_academic_period_id');
-            $table->integer('evaluation_student_id');
-            $table->integer('evaluation_study_subModule_id');
-            $table->integer('evaluation_mark_id');
-            $table->timestamp('evaluation_created_at');
-            $table->integer('evaluation_creationUserId')->unsigned()->nullable();
-            $table->timestamp('evaluation_updated_at');
-            $table->integer('evaluation_lastUpdateUserId')->unsigned()->nullable();
-            $table->softDeletes();
-
-
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('evaluation');
-    }
-
-}
-	
-						</code></pre>
 						<pre><code data-trim>
 							$ php artisan [migrate|migrate:refresh|migrate:reset|migrate:rollback] [--seed]
 	
@@ -226,8 +246,12 @@ $ composer install
 					</section>
 					<section>
 						<h3>Seeders</h3>
-						<p><b>database/seeds</b></p>
+                        <p><b>database/seeds</b></p>
+                        <p> Las utilizamos para sembrar de datos las tablas de la base de datos.</p>
+						
 							<ul>
+                                <li>Herramientas útiles:</li>
+                                <ul>
 								<li>
 									<a href="https://github.com/laracasts/Laravel-5-Generators-Extended">Laravel-5-Generators-Extended</a>
 									<pre><code data-trim>
@@ -243,59 +267,31 @@ $ composer install
 										$ composer require fzaninotto/faker
 									</code></pre>
 								</li>
+                            </ul>
 							</ul>
 					</section>
 					<section>
 						<h3>Seeders</h3>
 						
 						<p><b>database/seeds</b></p>
+                        <p>La clase hereda de <strong>DataBaseSeeder</strong></p>
 						<pre><code data-trim>
 							class EvaluationTableSeeder extends DatabaseSeeder
-{
-
-    /**
-     * Table evaluation seeder
-     *
-     * @return void
-     */
-    public function run()
-    {
-        Model::unguard();
-        //First delete all table
-        DB::table('evaluation')->truncate();
-
-        //use docs_seeder/evaluation.csv to seed
-        $csv = dirname(__FILE__) . '/docs_seeder/evaluation.csv';
-        $file_handle = fopen($csv, "r");
-
-        while (!feof($file_handle)) {
-            $line = fgetcsv($file_handle);
-            if (empty($line)) {
-                continue; // skip blank lines
-            }
-            //create records
-            Evaluation::Create(array(
-                'evaluation_academic_period_id' => $line[0],
-                'evaluation_student_id' => $line[1],
-                'evaluation_study_subModule_id' => $line[2],
-                'evaluation_mark_id' => $line[3]
-            ));
-
-        }
-        fclose($file_handle);
-
-        //message
-        $this->command->info('Table evaluation seeded!');
-
-    }
-						</code></pre>
+                        </code></pre>
+                        <p>En el método run() del Seeder desactivamos la protección de los campos no fillable</p>
 						<pre><code data-trim>
-//database/seeds/DataBaseSeeder.php
-Model::unguard();
-//call grade_scale_mark table seeder
- $this->call('GradeScaleMarkTableSeeder');
+
+                        Model::unguard();
+                        </code></pre>
+                        <p>En la clase DataBase seeder, realizamos la llamada al sembrador</p>
+
+                        <pre><code data-trim>
+                            //database/seeds/DataBaseSeeder.php
+                            //call evaluation table seeder
+                             $this->call('EvaluationTableSeeder');
 
 						 </code></pre>
+
 						</section>
 						 <section>
 						 	<h3>Seeders</h3>
@@ -304,64 +300,24 @@ Model::unguard();
 						 </code></pre>
 						</section>
 						<section>
-							<h3>Models</h3>
+							<h3>Models ORM Eloquent</h3>
 							<p><b>app/</b></p>
+                            <p>Utilizados como la representación de las tablas en forma de objeto con atributos, 
+                                donde los atributos son los campos de la tabla.</p>
+                            <p>Generamos un modelo por cada tabla de la base de datos especificando que no genere la migración, pues ya las tenemos.</p>
+
 							<pre><code data-trim>
 								$ php artisan make:model Evaluation [--no-migration]
 							</code></pre>
-							<pre><code data-trim>
-								class Evaluation extends Model
-{
-    use SoftDeletes;
-    /**
-     * Soft delete field
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'evaluation';
-
-    /**
-     * Override primary key name
-     *
-     * @var string
-     */
-    protected $primaryKey = 'evaluation_id';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['evaluation_academic_period_id', 'evaluation_mark_id',
-        'evaluation_student_id', 'evaluation_study_subModule_id', 'evaluation_lastUpdateUserId'];
-
-    /**
-     * The name of the "created at" column.
-     *
-     * @var string
-     */
-    const CREATED_AT = 'evaluation_created_at';
-
-    /**
-     * The name of the "updated at" column.
-     *
-     * @var string
-     */
-    const UPDATED_AT = 'evaluation_updated_at';
-							</code></pre>
 
 							
 						</section>
 	<section>
 		<h3>Relations</h3>
 		<p><b><a href="http://laravel.com/docs/5.0/eloquent#relationships">ORM Eloquent</a></b><p>
+        <p>Es necesario definir las diferentes relaciones que existen en tre las tablas. 
+            Esto se realiza en cada uno de los modelos, creando un nuevo método por cada tipo de relación.</p>
 
 
 	</section>
@@ -423,167 +379,26 @@ Model::unguard();
 		<section>
 			<h3>Controllers</h3>
 			<p><b>app/Http/Controllers/ModelControllers</b><p>
+                <p>Son la base de la API.</p>
+                <p>Contienen los métodos de las operaciones CRUD de cada uno de los modelos.</p>
+                <p> Crearemos un controlador por cada modelo.</p>
 			<pre><code data-trim>
 			$ php artisan make:controller ModelControllers/EvaluationController
 			</code></pre>
+            <p>En el propio constructor del controlador obligamos a que el usuario que haga la petición, este autenticado, previamente.</p>
 			<pre><code data-trim>
-				class EvaluationController extends ApiController
-{
 
-    /**
-     * @var EvaluationTransformer
-     */
-    protected $evaluationTransformer;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @param EvaluationTransformer $evaluationTransformer
-     */
-    function __construct(EvaluationTransformer $evaluationTransformer)
+    function __construct()
     {
         $this->middleware('auth');
-
-        $this->evaluationTransformer = $evaluationTransformer;
+  
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        $evaluations = Evaluation::all();
-
-        return $this->respond([
-
-            'data' => $this->evaluationTransformer->transformCollection($evaluations->toArray())
-
-        ]);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function indexWithTrashed()
-    {
-        //return Evaluation::withTrashed()->get();
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        Evaluation::create(Request::all());
-
-        return $this->respondCreated('Evaluation created');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        $evaluation = Evaluation::find($id);
-
-        if (!$evaluation) {
-
-            return $this->respondNotFound('Evaluation does not exists.');
-        }
-
-        return $this->respond([
-
-            'data' => $this->evaluationTransformer->transform($evaluation->toArray())
-
-        ]);
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function update($id)
-    {
-
-        $evaluation = Evaluation::findOrFail($id);
-
-        $evaluation->evaluation_academic_period_id = Request::input('academicPeriodId');
-        $evaluation->evaluation_study_subModule_id = Request::input('subModuleId');
-        $evaluation->evaluation_student_id = Request::input('studentId');
-        $evaluation->evaluation_mark_id = Request::input('markId');
-        $evaluation->evaluation_lastUpdateUserId = Request::input('lastUpdateUserId');
-        $evaluation->save();
-
-        return $evaluation;
-
-    }
-
-    /**
-     * Remove evaluation resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        $evaluation = Evaluation::findorfail($id);
-        $evaluation->forceDelete($id);
-    }
-
-    /**
-     * Mark for deletion the evaluation
-     *
-     * @param $id
-     */
-    public function delete($id)
-    {
-        $evaluation = Evaluation::findOrFail($id);
-
-        $evaluation->delete();
-    }
-
-
-}
-
-			</code></pre>
+            </code></pre>
 
 			</section>
 			<section>
 				<h3>controllers</h3>
+                <p>Además de las operaciones CRUD, poseen métodos para ejecutar consultas basadas en las relaciones entre los modelos.</p>
 			<p>Ejecución de querys con relaciones(eager-load, lazy-load, nested)<p>
 			<pre><code data-trim>
 				 public function getGroupEvaluations()
@@ -602,31 +417,19 @@ Model::unguard();
 			<section>
 				<h3>Routes</h3>
 				<p><b>app/Http/Routes.php</b></p>
+                <p>Laravel obliga a definir las rutas de forma manual.</p>
+                <p>Para generar las rutas de un recurso perteneciente a una API utilizamos:</p>
 				<pre><code data-trim>
 					Route::group(['prefix' => 'api'], function () {
 
     Route::resource('evaluations', 'ModelControllers\EvaluationController');
 
-    Route::resource('users', 'ModelControllers\UsersController');
-
-    Route::resource('gradescales', 'ModelControllers\GradeScaleController');
-
-    Route::resource('marks', 'ModelControllers\MarkController');
-
-    Route::resource('studysubmodules', 'ModelControllers\StudySubmodulesController');
-
-    Route::resource('studymodules', 'ModelControllers\StudyModuleController');
-
 });
 				</code></pre>
+                <p>El resto de rutas están definidas según el método</p>
 				<pre><code data-trim>
-Route::get('evaluationswithTrashed', 'ModelControllers\EvaluationController@indexWithTrashed');                                   
-                                                                                                                                 
-Route::match(array('GET', 'POST'), 'usersgroupevaluations', 'ModelControllers\UsersController@getGroupEvaluations');             
-                                                                                                                                 
-Route::get('studymodule/{id}/submodules', 'ModelControllers\StudyModuleController@getSubModules');                               
-                                                                                                                                 
- 
+Route::get('evaluationswithTrashed', 'ModelControllers\EvaluationController@indexWithTrashed');          
+Route::match(array('GET', 'POST'), 'usersgroupevaluations', 'ModelControllers\UsersController@getGroupEvaluations');                                                                                                         
 				</code></pre>
 			</section>
 			<section>
